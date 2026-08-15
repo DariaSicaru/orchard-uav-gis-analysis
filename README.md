@@ -135,15 +135,15 @@ This highlights an important limitation of RGB photogrammetry when working with 
 
 ### Documentation
 
-The complete project report is available in the `documentation` folder.
+The complete project report is available in the [documentation](documentation/) folder.
 
 ### Maps
 
-The final thematic and interpolation maps are available in the `maps` folder.
+The final thematic and interpolation maps are available in the [maps](maps/) folder.
 
 ### Results
 
-The statistical analysis and comparison of height estimation methods are available in the `results` folder.
+The statistical analysis and comparison of height estimation methods are available in the [results](results/) folder.
 
 ## Tools and Technologies
 
