@@ -167,3 +167,8 @@ Future development could include:
 - automated extraction of tree characteristics;
 - integration of additional environmental measurements;
 - development of more advanced spatial analysis and decision-support workflows.
+  
+## Author
+
+**Daria Sicaru**  
+Applied Informatics in Environmental Engineering
