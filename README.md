@@ -175,6 +175,35 @@ IDW interpolation was applied to the GLI and VARI values associated with the 15 
 
 The interpolated surfaces were interpreted as exploratory spatial representations rather than direct measurements of vegetation condition.
 
+## Results
+
+The three height estimation methods produced different levels of performance.
+
+| Method | Detection rate | RMSE | MAE | Mean bias |
+|---|---:|---:|---:|---:|
+| CHM | 73% | 1.85 m | 1.75 m | -1.75 m |
+| Buffer-DSM | 80% | 0.55 m | 0.47 m | -0.42 m |
+| CHM-CloudCompare | **87%** | **0.40 m** | **0.33 m** | **-0.25 m** |
+
+The CloudCompare-derived CHM achieved both the highest detection rate and the lowest estimation error among the three tested approaches.
+
+The results also showed a systematic tendency toward underestimation for all three methods. The bias was smallest for the CloudCompare-derived CHM.
+
+The comparison demonstrated that direct control over ground/non-ground classification and the independent generation of the DTM and DSM improved the performance of the height estimation workflow for this dataset.
+
+The RGB indices produced values approximately between:
+
+- **GLI:** 0.12–0.27
+- **VARI:** 0.10–0.33
+
+Pearson correlation coefficients indicated:
+
+- **GLI vs. tree height:** r = 0.402
+- **VARI vs. tree height:** r = 0.672
+- **GLI vs. VARI:** r = 0.664
+
+These relationships indicate associations within the analyzed dataset, but the RGB indices were not treated as independent measures of tree health.
+
 ## Project Outputs
 
 The project resulted in:
@@ -199,7 +228,7 @@ The project resulted in:
 
 ### Documentation
 
-The complete project report is available in the documentation[documentation](documentation/) folder.
+The complete project report is available in the [documentation](documentation/) folder.
 
 ### Maps
 
