@@ -2,9 +2,11 @@
 
 ## Overview
 
-This project presents a GIS-based analysis of a small orchard using RGB imagery acquired by a UAV. The workflow combines photogrammetric processing, GIS analysis, vegetation indices and spatial interpolation to characterize individual trees and investigate their spatial variability.
+This project presents a GIS-based analysis of a small orchard using RGB imagery acquired by a UAV. The workflow combines photogrammetric processing, GIS analysis, point-cloud processing, RGB vegetation indices and spatial analysis to characterize individual trees and evaluate different approaches for estimating tree height.
 
-The project was developed as a practical study in UAV-based environmental monitoring and geospatial analysis.
+The project was developed as a practical study in UAV-based environmental monitoring, photogrammetry, GIS and 3D point-cloud analysis.
+
+A particular focus of the project was the comparison between three different tree-height estimation approaches, using direct field measurements as reference data.
 
 ## Study Area and Data
 
@@ -15,22 +17,28 @@ The study area is a private garden in Blejoi, Prahova County, Romania, covering 
 - **Survey date:** 11 July 2026
 - **Survey time:** approximately 11:30
 - **Weather:** clear sky
-- **Temperature:** 24 °C
+- **Temperature:** approximately 24 °C
 - **Wind speed:** approximately 7 km/h
 - **Data type:** RGB aerial imagery
+- **Flight altitude:** 30 m
+- **Camera orientation:** nadir (90°)
+- **Target overlap:** approximately 70–72%
+- **GSD:** approximately 1 cm
 
-The RGB imagery was processed photogrammetrically to obtain spatial data products used in the subsequent GIS analysis.
+The RGB imagery was processed photogrammetrically to obtain spatial data products used in the subsequent GIS and 3D analysis.
 
 ## Objectives
 
 The main objectives of the project were:
 
 - to generate photogrammetric products from UAV RGB imagery;
+- to generate and analyze a photogrammetric point cloud;
 - to identify and characterize individual trees;
-- to estimate tree height using two different approaches;
+- to estimate tree height using three different approaches;
+- to validate the height estimation methods using direct field measurements;
 - to calculate canopy area;
 - to calculate RGB-based vegetation indices, GLI and VARI;
-- to investigate relationships between tree characteristics and vegetation indices;
+- to investigate relationships between tree characteristics and RGB vegetation indices;
 - to analyze the spatial distribution of GLI and VARI;
 - to produce thematic maps and interpret the obtained results.
 
@@ -39,17 +47,21 @@ The main objectives of the project were:
 The workflow consisted of the following main stages:
 
 1. UAV image acquisition;
-2. photogrammetric processing;
-3. generation of an orthophoto, DSM and DTM;
-4. creation of a Canopy Height Model (CHM);
-5. digitization of individual trees;
-6. estimation of tree height using two approaches;
-7. calculation of canopy area;
-8. calculation of GLI and VARI from RGB imagery;
-9. statistical analysis of the obtained variables;
-10. spatial interpolation using the IDW method;
-11. production of thematic maps;
-12. interpretation of the spatial and statistical results.
+2. photogrammetric processing in WebODM;
+3. generation of an orthophoto, DSM, DTM and photogrammetric point cloud;
+4. digitization of individual trees in QGIS;
+5. estimation of tree height using three different approaches;
+6. direct field measurements for validation;
+7. classification of the point cloud into ground and non-ground points using the CSF algorithm in CloudCompare;
+8. generation of an independent DTM from classified ground points;
+9. generation of an independent DSM from the complete point cloud;
+10. generation of a CHM from the CloudCompare-derived DSM and DTM;
+11. calculation of canopy area;
+12. calculation of GLI and VARI from RGB imagery;
+13. statistical analysis of the obtained variables;
+14. spatial interpolation using the IDW method;
+15. production of thematic maps;
+16. comparison and interpretation of the results.
 
 ## Tree Characterization
 
@@ -59,17 +71,62 @@ For each tree, the analysis included:
 
 - tree ID;
 - species;
+- canopy geometry;
 - estimated height;
 - canopy area;
 - GLI;
 - VARI.
 
-Tree height was estimated using two approaches:
+### Tree Height Estimation
 
-- **DSM–DTM difference**, using the Canopy Height Model;
-- **DSM-based estimation**, using the maximum DSM elevation within the crown and a local ground reference estimated from an external buffer.
+Three approaches were evaluated:
 
-The comparison of the two approaches was used to investigate the limitations of photogrammetric height estimation for small or poorly reconstructed tree crowns.
+#### 1. CHM — WebODM
+
+The first method used the difference between the photogrammetric DSM and DTM:
+
+`CHM = DSM - DTM`
+
+The resulting CHM was used to estimate tree height within the digitized crown polygons.
+
+#### 2. Buffer-DSM
+
+The second method used the maximum DSM elevation within each tree crown.
+
+A surrounding buffer was used to estimate the local ground elevation from the DSM. Tree height was then calculated as the difference between the maximum DSM elevation within the crown and the estimated local ground elevation.
+
+#### 3. CHM — CloudCompare
+
+The third method was based directly on the photogrammetric point cloud.
+
+The point cloud was classified into ground and non-ground points using the Cloth Simulation Filter (CSF) algorithm in CloudCompare.
+
+The classified ground points were used to generate an independent DTM at 0.1 m resolution.
+
+A second raster was generated from the complete point cloud using the maximum Z value within each raster cell, producing an independent DSM.
+
+The difference between the two models was then used to generate a second CHM:
+
+`CHM = DSM_CloudCompare - DTM_CloudCompare`
+
+This workflow provided an independent 3D-derived height estimation approach compared with the products generated automatically by WebODM.
+
+## Field Validation
+
+Direct field measurements were performed to evaluate the accuracy of the three photogrammetric approaches.
+
+Tree heights were measured manually using a tape measure, with an estimated measurement uncertainty of approximately ±10 cm.
+
+The comparison included:
+
+- detection rate;
+- RMSE (Root Mean Square Error);
+- MAE (Mean Absolute Error);
+- mean bias.
+
+A minimum height threshold of 0.3 m was used to determine whether a tree was detected by each method.
+
+For the accuracy metrics, only the 11 trees detected by all three methods were included, ensuring that the methods were compared using the same sample.
 
 ## RGB Vegetation Indices
 
@@ -77,26 +134,31 @@ Two vegetation indices based on RGB imagery were calculated:
 
 ### GLI — Green Leaf Index
 
-GLI was used to describe the relative contribution of the green channel in the RGB imagery and to investigate spatial differences in vegetation appearance.
+GLI was used to characterize the relative contribution of the green channel in the RGB imagery and to investigate variation in vegetation appearance between individual trees.
 
 ### VARI — Visible Atmospherically Resistant Index
 
-VARI was calculated as an additional RGB-based indicator of vegetation conditions.
+VARI was calculated as an additional RGB-based indicator and analyzed in relation to tree characteristics.
 
-Both indices were analyzed at the individual-tree level and subsequently interpolated spatially using the IDW method.
+The indices were calculated at the individual-tree level using representative mean values for each crown.
+
+The relationships between GLI, VARI and structural characteristics were investigated using descriptive statistics and Pearson correlation.
 
 ## Statistical Analysis
 
-The relationship between tree characteristics and RGB vegetation indices was investigated using descriptive statistics and correlation analysis.
+The statistical analysis included:
 
-The analysis included relationships between:
+- comparison of the three tree-height estimation methods;
+- detection rate for each method;
+- RMSE;
+- MAE;
+- mean bias;
+- Pearson correlation between GLI and tree height;
+- Pearson correlation between VARI and tree height;
+- Pearson correlation between GLI and VARI;
+- comparison of mean GLI and VARI values between species.
 
-- tree height and GLI;
-- canopy area and GLI;
-- tree species and mean GLI;
-- corresponding variables related to VARI.
-
-The statistical results were used together with the spatial analysis to better understand the variability observed within the study area.
+The height validation showed that the CloudCompare-derived CHM provided the best performance among the three tested approaches for the analyzed dataset.
 
 ## Spatial Analysis
 
@@ -109,33 +171,35 @@ The project included thematic maps representing:
 - GLI;
 - VARI.
 
-IDW interpolation was subsequently applied to the GLI and VARI point values to visualize their spatial distribution across the study area.
+IDW interpolation was applied to the GLI and VARI values associated with the 15 analyzed trees in order to visualize their estimated spatial distribution across the study area.
 
-The interpolated surfaces provide a continuous spatial representation of the variation observed at the sampled trees.
-
-## Results
-
-The project resulted in:
-
-- a photogrammetric orthophoto;
-- DSM and DTM products;
-- a CHM derived from DSM and DTM;
-- a spatial database of 15 individual trees;
-- tree height and canopy area measurements;
-- GLI and VARI values for individual trees;
-- statistical relationships between tree characteristics and vegetation indices;
-- thematic maps;
-- IDW interpolation maps for GLI and VARI.
-
-One important observation was the presence of trees for which the CHM provided values close to zero. These cases were associated with crowns that were not sufficiently reconstructed in the DSM. The alternative DSM-based approach was able to recover useful height information in at least some of these cases.
-
-This highlights an important limitation of RGB photogrammetry when working with small, sparse or partially visible tree crowns.
+The interpolated surfaces were interpreted as exploratory spatial representations rather than direct measurements of vegetation condition.
 
 ## Project Outputs
 
+The project resulted in:
+
+- UAV RGB imagery;
+- photogrammetric orthophoto;
+- WebODM DSM and DTM;
+- photogrammetric point cloud;
+- ground/non-ground classification using CSF;
+- CloudCompare-derived DTM;
+- CloudCompare-derived DSM;
+- CloudCompare-derived CHM;
+- spatial database of 15 individual trees;
+- tree-height estimates using three different methods;
+- direct field measurements;
+- quantitative validation results;
+- GLI and VARI values;
+- statistical analysis;
+- thematic maps;
+- IDW interpolation maps for GLI and VARI;
+- final project documentation.
+
 ### Documentation
 
-The complete project report is available in the [documentation](documentation/) folder.
+The complete project report is available in the documentation[documentation](documentation/) folder.
 
 ### Maps
 
@@ -143,31 +207,43 @@ The final thematic and interpolation maps are available in the [maps](maps/) fol
 
 ### Results
 
-The statistical analysis and comparison of height estimation methods are available in the [results](results/) folder.
+The statistical analysis, field measurements and comparison of the three height estimation methods are available in the [results](results/) folder.
 
 ## Tools and Technologies
 
 - QGIS
+- CloudCompare
 - WebODM
 - Microsoft Excel
 - UAV RGB imagery
 - Photogrammetry
+- Point-cloud processing
+- CSF ground classification
+- Raster analysis
 - GIS spatial analysis
 - IDW interpolation
 
 ## Limitations and Future Development
 
-The project is based exclusively on RGB imagery and therefore does not provide direct access to multispectral vegetation information.
+The project is based exclusively on RGB imagery and therefore does not provide direct multispectral information.
+
+The validation dataset consisted of 15 trees, with accuracy metrics calculated on the 11 trees detected by all three methods. Field measurements were performed manually and have an estimated uncertainty of approximately ±10 cm.
+
+The photogrammetric reconstruction also presented limitations for small, sparse or partially reconstructed tree crowns. Such cases resulted in low or missing height estimates for some trees.
+
+The GLI and VARI analyses were exploratory. Because no independent field measurements of vegetation condition were available, the indices were not used as direct indicators of tree health.
 
 Future development could include:
 
 - multispectral UAV imagery;
-- automated geospatial processing using Python;
-- 3D analysis of photogrammetric point clouds;
+- LiDAR data integration;
+- automated point-cloud classification;
+- 3D analysis of individual tree crowns;
 - automated extraction of tree characteristics;
-- integration of additional environmental measurements;
-- development of more advanced spatial analysis and decision-support workflows.
-  
+- Python-based geospatial processing;
+- integration of environmental sensor measurements;
+- development of advanced decision-support workflows.
+
 ## Author
 
 **Daria Sicaru**  
