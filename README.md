@@ -38,6 +38,7 @@ The main objectives of the project were:
 - to validate the height estimation methods using direct field measurements;
 - to calculate canopy area;
 - to calculate RGB-based vegetation indices, GLI and VARI;
+- to perform selective field validation of trees with pronounced spectral anomalies.
 - to investigate relationships between tree characteristics and RGB vegetation indices;
 - to analyze the spatial distribution of GLI and VARI;
 - to produce thematic maps and interpret the obtained results.
@@ -204,6 +205,8 @@ Pearson correlation coefficients indicated:
 
 These relationships indicate associations within the analyzed dataset, but the RGB indices were not treated as independent measures of tree health.
 
+Field verification of trees with pronounced spectral anomalies (low GLI/VARI values) revealed observable canopy stress symptoms in two cases. For one tree, severe foliage desiccation and browning were observed, consistent with (though not laboratory-confirmed as) a bacterial disease pattern. For another tree, despite a dense canopy (reflected in a normal GLI value), the foliage showed visible chlorosis, which was reflected specifically in a low VARI value — illustrating that GLI and VARI can respond differently depending on whether the anomaly is structural (canopy density) or biochemical (pigment degradation).
+
 ## Project Outputs
 
 The project resulted in:
@@ -260,8 +263,7 @@ The validation dataset consisted of 15 trees, with accuracy metrics calculated o
 
 The photogrammetric reconstruction also presented limitations for small, sparse or partially reconstructed tree crowns. Such cases resulted in low or missing height estimates for some trees.
 
-The GLI and VARI analyses were exploratory. Because no independent field measurements of vegetation condition were available, the indices were not used as direct indicators of tree health.
-
+The GLI and VARI analyses were primarily exploratory. For trees with notably low index values, field verification was performed to assess whether the spectral anomaly corresponded to an observable biological condition. This verification was selective (performed only for trees with clear spectral anomalies), not systematic across all 15 trees; consequently, the possibility of undetected anomalies or false positives among the remaining trees cannot be excluded. Any biological interpretations (e.g., suspected disease symptoms) are based on macroscopic field observation only, without laboratory confirmation, and should be considered indicative rather than diagnostic.
 Future development could include:
 
 - multispectral UAV imagery;
